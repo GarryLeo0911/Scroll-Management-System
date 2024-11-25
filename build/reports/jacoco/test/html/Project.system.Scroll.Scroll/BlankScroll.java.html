@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>BlankScroll.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">SOFT2412_Assignment2</a> &gt; <a href="index.source.html" class="el_package">Project.system.Scroll.Scroll</a> &gt; <span class="el_source">BlankScroll.java</span></div><h1>BlankScroll.java</h1><pre class="source lang-java linenums">package Project.system.Scroll.Scroll;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
+import java.io.*;
+import java.nio.file.Paths;
+import java.time.LocalDate;
+
+import org.json.simple.JSONObject;
+
+public class BlankScroll implements Scroll {
+    private String Scroll_Name;
+    private int Scroll_ID;
+    private int Uploader_ID;
+    private LocalDate Upload_Date;
+    private String Content;
+    private int DownloadTimes;
+    private int UploadTimes;
+    private File file;
+
+    // Path to the JSON file
+    private static final String TOC_JSON_PATH = &quot;src/main/resources/Project/Scroll/TableOfContent.json&quot;;
+
+    // The Object of Catalog
+    private JSONObject catalog;
+
+    // Constructor
+<span class="fc" id="L31">    public BlankScroll(String Scroll_Name, int Scroll_ID, int Uploader_ID) {</span>
+<span class="fc" id="L32">        this.Scroll_Name = Scroll_Name;</span>
+<span class="fc" id="L33">        this.Scroll_ID = Scroll_ID;</span>
+<span class="fc" id="L34">        this.Uploader_ID = Uploader_ID;</span>
+<span class="fc" id="L35">        this.UploadTimes = 1;</span>
+<span class="fc" id="L36">        this.DownloadTimes = 0;</span>
+<span class="fc" id="L37">        this.Upload_Date = LocalDate.now();</span>
+<span class="fc" id="L38">    }</span>
+
+    public String getScroll_Name() {
+<span class="fc" id="L41">        return Scroll_Name;</span>
+    }
+
+    public void setScroll_Name(String scroll_Name) {
+<span class="fc" id="L45">        this.Scroll_Name = scroll_Name;</span>
+<span class="fc" id="L46">    }</span>
+
+    public int getScroll_ID() {
+<span class="fc" id="L49">        return Scroll_ID;</span>
+    }
+
+    public void setScroll_ID(int scroll_ID) {
+<span class="nc" id="L53">        this.Scroll_ID = scroll_ID;</span>
+<span class="nc" id="L54">    }</span>
+
+    public int getUploader_ID() {
+<span class="fc" id="L57">        return Uploader_ID;</span>
+    }
+
+    public void setUploader_ID(int uploader_ID) {
+<span class="nc" id="L61">        this.Uploader_ID = uploader_ID;</span>
+<span class="nc" id="L62">    }</span>
+
+    public void setDownloadTimes() {
+<span class="nc" id="L65">        this.DownloadTimes++;</span>
+<span class="nc" id="L66">    }</span>
+
+    public int getDownloadTimes() {
+<span class="nc" id="L69">        return DownloadTimes;</span>
+    }
+
+    public int getUploadTimes() {
+<span class="nc" id="L73">        return UploadTimes;</span>
+    }
+
+    public LocalDate getUpload_Date() {
+<span class="nc" id="L77">        return Upload_Date;</span>
+    }
+
+    public String getContent() {
+<span class="fc" id="L81">        return Content;</span>
+    }
+
+    public void setContent(String content) {
+<span class="fc" id="L85">        this.Content = content;</span>
+<span class="fc" id="L86">    }</span>
+
+    public void createFile() {
+        try {
+<span class="fc" id="L90">            this.file = new File(&quot;src/main/resources/Project/Scroll/&quot; + Scroll_ID + &quot;.txt&quot;);</span>
+
+            // Create scroll file if it doesn't exist
+<span class="pc bpc" id="L93" title="1 of 2 branches missed.">            if (!file.exists()) {</span>
+<span class="fc" id="L94">                file.createNewFile();</span>
+<span class="fc" id="L95">                writeToFile();</span>
+
+                // Add scroll metadata to the TableOfContent.json file
+<span class="fc" id="L98">                addToTableOfContents();</span>
+            }
+
+<span class="nc" id="L101">        } catch (IOException e) {</span>
+<span class="nc" id="L102">            e.printStackTrace();</span>
+<span class="fc" id="L103">        }</span>
+<span class="fc" id="L104">    }</span>
+
+    public void writeToFile() {
+        try {
+<span class="fc" id="L108">            FileWriter writer = new FileWriter(&quot;src/main/resources/Project/Scroll/&quot; + Scroll_ID + &quot;.txt&quot;);</span>
+<span class="fc" id="L109">            writer.write(getContent());</span>
+<span class="fc" id="L110">            writer.close();</span>
+<span class="nc" id="L111">        } catch (IOException e) {</span>
+<span class="nc" id="L112">            System.out.println(e);</span>
+<span class="fc" id="L113">        }</span>
+<span class="fc" id="L114">    }</span>
+
+    private void addToTableOfContents() {
+<span class="fc" id="L117">        ObjectMapper mapper = new ObjectMapper();</span>
+
+        try {
+<span class="fc" id="L120">            File tocFile = new File(TOC_JSON_PATH);</span>
+            ArrayNode arrayNode;
+
+            // Check if file exists and read the current data
+<span class="pc bpc" id="L124" title="1 of 2 branches missed.">            if (tocFile.exists()) {</span>
+<span class="fc" id="L125">                JsonNode rootNode = mapper.readTree(tocFile);</span>
+<span class="pc bpc" id="L126" title="1 of 2 branches missed.">                if (rootNode.isArray()) {</span>
+<span class="fc" id="L127">                    arrayNode = (ArrayNode) rootNode;</span>
+                } else {
+<span class="nc" id="L129">                    arrayNode = mapper.createArrayNode();</span>
+                }
+<span class="fc" id="L131">            } else {</span>
+<span class="nc" id="L132">                arrayNode = mapper.createArrayNode();</span>
+            }
+
+            // Create new JSON object for the scroll data
+<span class="fc" id="L136">            ObjectNode scrollData = mapper.createObjectNode();</span>
+<span class="fc" id="L137">            scrollData.put(&quot;Scroll_Name&quot;, Scroll_Name);</span>
+<span class="fc" id="L138">            scrollData.put(&quot;Scroll_ID&quot;, Scroll_ID);</span>
+<span class="fc" id="L139">            scrollData.put(&quot;Uploader_ID&quot;, Uploader_ID);</span>
+<span class="fc" id="L140">            scrollData.put(&quot;UploadTimes&quot;, UploadTimes);</span>
+<span class="fc" id="L141">            scrollData.put(&quot;DownloadTimes&quot;, DownloadTimes);</span>
+<span class="fc" id="L142">            scrollData.put(&quot;Upload_Date&quot;, Upload_Date.toString());</span>
+
+            // Add the new scroll metadata to the array
+<span class="fc" id="L145">            arrayNode.add(scrollData);</span>
+
+            // Write the updated data to the TableOfContent.json file
+<span class="fc" id="L148">            mapper.writerWithDefaultPrettyPrinter().writeValue(Paths.get(TOC_JSON_PATH).toFile(), arrayNode);</span>
+
+<span class="nc" id="L150">        } catch (IOException e) {</span>
+<span class="nc" id="L151">            System.err.println(&quot;Error updating Table of Contents: &quot; + e.getMessage());</span>
+<span class="nc" id="L152">            e.printStackTrace();  // Still print the stack trace for debugging purposes</span>
+<span class="fc" id="L153">        }</span>
+<span class="fc" id="L154">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Admin.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">SOFT2412_Assignment2</a> &gt; <a href="index.source.html" class="el_package">Project.system.User.State</a> &gt; <span class="el_source">Admin.java</span></div><h1>Admin.java</h1><pre class="source lang-java linenums">package Project.system.User.State;
+
+import Project.system.Scroll.Scroll.Scroll;
+import Project.system.ScrollSeeker.Preview;
+import Project.system.ScrollSeeker.Search;
+import Project.system.ScrollSeeker.View;
+import Project.system.User.User.UserTemplate;
+
+import java.util.ArrayList;
+
+<span class="fc" id="L11">public class Admin implements UserState {</span>
+    @Override
+    public String View() {
+<span class="nc" id="L14">        return View.getScrollContent();</span>
+    }
+
+    @Override
+    public ArrayList&lt;Scroll&gt; Preview() {
+<span class="nc" id="L19">        return Preview.getScrollsList();</span>
+    }
+
+    @Override
+    public void Update_Profile() {
+
+<span class="nc" id="L25">    }</span>
+
+    @Override
+    public void Manage_User() {
+
+<span class="nc" id="L30">    }</span>
+
+    @Override
+    public void View_Scroll_State() {
+
+<span class="nc" id="L35">    }</span>
+
+    @Override
+    public ArrayList&lt;UserTemplate&gt; View_User() {
+<span class="nc" id="L39">        return null;</span>
+    }
+
+    @Override
+    public ArrayList&lt;Scroll&gt; Search() {
+<span class="nc" id="L44">        return Search.searchScroll();</span>
+    }
+
+    @Override
+    public void Download() {
+
+<span class="nc" id="L50">    }</span>
+
+    @Override
+    public void Add_Scroll(String Scroll_Name, int Uploader_ID) {
+
+<span class="nc" id="L55">    }</span>
+
+    @Override
+    public void Remove_Scroll(String ScrollID) {
+
+<span class="nc" id="L60">    }</span>
+
+    @Override
+    public void Edit_Scroll(String ScrollID, String Content) {
+
+<span class="nc" id="L65">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

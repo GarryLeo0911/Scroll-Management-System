@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>User.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">SOFT2412_Assignment2</a> &gt; <a href="index.source.html" class="el_package">Project.system.User.State</a> &gt; <span class="el_source">User.java</span></div><h1>User.java</h1><pre class="source lang-java linenums">package Project.system.User.State;
+
+import Project.system.Scroll.Scroll.Scroll;
+import Project.system.Scroll.ScrollFactory.ExistingScrollFactory;
+import Project.system.Scroll.ScrollFactory.ScrollFactory;
+import Project.system.ScrollManagement.Add;
+import Project.system.ScrollManagement.Edit;
+import Project.system.ScrollManagement.Remove;
+import Project.system.ScrollSeeker.Preview;
+import Project.system.ScrollSeeker.Search;
+import Project.system.ScrollSeeker.View;
+import Project.system.User.User.UserTemplate;
+
+import java.util.ArrayList;
+
+<span class="fc" id="L16">public class User implements UserState {</span>
+
+    @Override
+    public String View() {
+<span class="nc" id="L20">        return View.getScrollContent();</span>
+    }
+
+    @Override
+    public ArrayList&lt;Scroll&gt; Preview() {
+<span class="nc" id="L25">        return Preview.getScrollsList();</span>
+    }
+
+    @Override
+    public void Update_Profile() {
+
+<span class="nc" id="L31">    }</span>
+
+    @Override
+    public void Manage_User() {
+<span class="nc" id="L35">        System.out.println(&quot;Sorry, you are not an Admin!&quot;);</span>
+<span class="nc" id="L36">    }</span>
+
+    @Override
+    public void View_Scroll_State() {
+<span class="nc" id="L40">        System.out.println(&quot;Sorry, you are not an Admin!&quot;);</span>
+<span class="nc" id="L41">    }</span>
+
+    @Override
+    public ArrayList&lt;UserTemplate&gt; View_User() {
+<span class="nc" id="L45">        return null;</span>
+    }
+
+    @Override
+    public ArrayList&lt;Scroll&gt; Search() {
+<span class="nc" id="L50">        return Search.searchScroll();</span>
+    }
+
+    @Override
+    public void Download() {
+
+<span class="nc" id="L56">    }</span>
+
+    @Override
+    public void Add_Scroll(String Scroll_Name, int Uploader_ID) {
+<span class="nc" id="L60">        Add.createScroll(Scroll_Name, Uploader_ID);</span>
+<span class="nc" id="L61">    }</span>
+
+    @Override
+    public void Remove_Scroll(String ScrollID) {
+<span class="nc" id="L65">        Remove.setScroll(ScrollID);</span>
+<span class="nc" id="L66">        Remove.removeScroll();</span>
+<span class="nc" id="L67">    }</span>
+
+    @Override
+    public void Edit_Scroll(String ScrollID, String Content) {
+<span class="nc" id="L71">        Edit.setScroll(ScrollID);</span>
+<span class="nc" id="L72">        Edit.editScrollContent(Content);</span>
+<span class="nc" id="L73">    }</span>
+
+    private int getScrollOwnerID(int ScrollID) {
+<span class="nc" id="L76">        ScrollFactory scrollFactory = new ExistingScrollFactory();</span>
+<span class="nc" id="L77">        Scroll scroll = scrollFactory.createScroll(ScrollID);</span>
+
+<span class="nc" id="L79">        return scroll.getUploader_ID();</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

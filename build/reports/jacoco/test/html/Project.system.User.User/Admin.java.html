@@ -1,0 +1,330 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Admin.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">SOFT2412_Assignment2</a> &gt; <a href="index.source.html" class="el_package">Project.system.User.User</a> &gt; <span class="el_source">Admin.java</span></div><h1>Admin.java</h1><pre class="source lang-java linenums">package Project.system.User.User;
+
+import Project.system.User.State.UserState;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.nio.file.Paths;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
+
+public class Admin implements UserTemplate {
+    private String password;
+    private String full_name;
+    private String email;
+    private String phone;
+    private int ID_key;
+    private ArrayList&lt;String&gt; Scrolls_Owned;
+    private UserType userType;
+    private UserState userState;
+    private String profilePicturePath;
+
+<span class="fc" id="L33">    private final String TOC_JSON_PATH = &quot;src/main/resources/Project/User/UserList.json&quot;;</span>
+    private JSONArray catalog;
+
+    // Constructor for signing up.
+<span class="fc" id="L37">    public Admin(String password, String full_name, String email, String phone, int ID_key) {</span>
+<span class="fc" id="L38">        this.password = hashPassword(password);</span>
+<span class="fc" id="L39">        this.full_name = full_name;</span>
+<span class="fc" id="L40">        this.email = email;</span>
+<span class="fc" id="L41">        this.phone = phone;</span>
+<span class="fc" id="L42">        this.ID_key = ID_key;</span>
+<span class="fc" id="L43">        this.userType = UserType.ADMIN;</span>
+<span class="fc" id="L44">        this.userState = new Project.system.User.State.Admin();</span>
+<span class="fc" id="L45">        this.Scrolls_Owned = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L46">        signUp();</span>
+<span class="fc" id="L47">    }</span>
+
+
+    // Override the Constructor so that it can be used to get the existing User
+<span class="fc" id="L51">    public Admin(int ID_key){</span>
+<span class="fc" id="L52">        this.ID_key = ID_key;</span>
+<span class="fc" id="L53">        searchUser();</span>
+<span class="fc" id="L54">    }</span>
+
+
+    @Override
+    public void signUp() {
+<span class="fc" id="L59">        ObjectMapper mapper = new ObjectMapper();</span>
+
+        try {
+<span class="fc" id="L62">            File tocFile = new File(TOC_JSON_PATH);</span>
+            ArrayNode arrayNode;
+
+            // Read existing JSON data or create new ArrayNode if the file doesn't exist
+<span class="pc bpc" id="L66" title="1 of 2 branches missed.">            if (tocFile.exists()) {</span>
+<span class="fc" id="L67">                JsonNode rootNode = mapper.readTree(tocFile);</span>
+<span class="pc bpc" id="L68" title="1 of 2 branches missed.">                if (rootNode.isArray()) {</span>
+<span class="fc" id="L69">                    arrayNode = (ArrayNode) rootNode;</span>
+                } else {
+<span class="nc" id="L71">                    arrayNode = mapper.createArrayNode();</span>
+                }
+<span class="fc" id="L73">            } else {</span>
+<span class="nc" id="L74">                arrayNode = mapper.createArrayNode();</span>
+            }
+
+            // Create new JSON object for this scroll
+<span class="fc" id="L78">            ObjectNode userData = mapper.createObjectNode();</span>
+<span class="fc" id="L79">            userData.put(&quot;ID_key&quot;, ID_key);</span>
+<span class="fc" id="L80">            userData.put(&quot;Full_Name&quot;, full_name);</span>
+<span class="fc" id="L81">            userData.put(&quot;Phone_Number&quot;, phone);</span>
+<span class="fc" id="L82">            userData.put(&quot;Email&quot;, email);</span>
+<span class="fc" id="L83">            userData.put(&quot;userType&quot;, userType.toString());</span>
+<span class="fc" id="L84">            userData.put(&quot;Password&quot;, password);</span>
+<span class="fc" id="L85">            userData.put(&quot;ProfilePicturePath&quot;, &quot;src/main/resources/Project/UserProfilePictures/&quot; + ID_key + &quot;.png&quot;);</span>
+            // Serialize Scrolls_Owned (ArrayList&lt;String&gt;) into JSON
+<span class="fc" id="L87">            ArrayNode scrollsArrayNode = mapper.createArrayNode();</span>
+<span class="pc bpc" id="L88" title="1 of 2 branches missed.">            for (String scroll : Scrolls_Owned) {</span>
+<span class="nc" id="L89">                scrollsArrayNode.add(scroll);  // Since it's just a string, directly add it to the array</span>
+<span class="nc" id="L90">            }</span>
+
+            // Add the serialized scrolls list to the user data
+<span class="fc" id="L93">            userData.set(&quot;Scrolls_Owned&quot;, scrollsArrayNode);</span>
+
+            // Append new user metadata to array
+<span class="fc" id="L96">            arrayNode.add(userData);</span>
+
+            // Write updated data to TableOfContent.json
+<span class="fc" id="L99">            mapper.writerWithDefaultPrettyPrinter().writeValue(Paths.get(TOC_JSON_PATH).toFile(), arrayNode);</span>
+
+<span class="nc" id="L101">        } catch (IOException e) {</span>
+<span class="nc" id="L102">            e.printStackTrace();</span>
+<span class="fc" id="L103">        }</span>
+<span class="fc" id="L104">    }</span>
+
+
+    @Override
+    public UserType getUserType() {
+<span class="fc" id="L109">        return this.userType;</span>
+    }
+
+
+    @Override
+    public void setPassword(String password) {
+<span class="nc" id="L115">        this.password = hashPassword(password);</span>
+<span class="nc" id="L116">    }</span>
+
+
+    @Override
+    public String getPassword() {
+<span class="fc" id="L121">        return this.password;</span>
+    }
+
+
+    @Override
+    public String getUsername() {
+<span class="fc" id="L127">        return this.full_name;</span>
+    }
+
+
+    @Override
+    public void setUsername(String username) {
+<span class="fc" id="L133">        this.full_name = username;</span>
+<span class="fc" id="L134">    }</span>
+
+    @Override
+    public String getEmail() {
+<span class="fc" id="L138">        return this.email;</span>
+    }
+
+
+    @Override
+    public void setEmail(String email) {
+<span class="fc" id="L144">        this.email = email;</span>
+<span class="fc" id="L145">    }</span>
+
+
+    @Override
+    public String getPhoneNumber() {
+<span class="fc" id="L150">        return this.phone;</span>
+    }
+
+
+    @Override
+    public void setPhoneNumber(String phoneNumber) {
+<span class="fc" id="L156">        this.phone = phoneNumber;</span>
+<span class="fc" id="L157">    }</span>
+
+
+    @Override
+    public int getIDKeys() {
+<span class="nc" id="L162">        return this.ID_key;</span>
+    }
+
+
+    @Override
+    public void setIDKeys(String IDKeys) {
+<span class="nc" id="L168">        this.ID_key = Integer.parseInt(IDKeys);</span>
+<span class="nc" id="L169">    }</span>
+
+
+    @Override
+    public UserState getUserState() {
+<span class="nc" id="L174">        return this.userState;</span>
+    }
+
+    @Override
+    public void addScroll(String ScrollID) {
+<span class="fc" id="L179">        this.Scrolls_Owned.add(ScrollID);</span>
+<span class="fc" id="L180">    }</span>
+
+
+    @Override
+    public ArrayList&lt;String&gt; getScrollsOwned() {
+<span class="fc" id="L185">        return this.Scrolls_Owned;</span>
+    }
+
+
+    private void searchUser() {
+        // Get the file's information
+<span class="fc" id="L191">        JSONParser parser = new JSONParser();</span>
+
+        try {
+<span class="fc" id="L194">            this.catalog = (JSONArray) parser.parse(new FileReader(TOC_JSON_PATH)); // Parse the JSON array directly</span>
+<span class="nc" id="L195">        } catch (FileNotFoundException e) {</span>
+<span class="nc" id="L196">            System.out.println(&quot;File not found&quot;);</span>
+<span class="nc" id="L197">            System.exit(0);</span>
+<span class="nc" id="L198">        } catch (ParseException e) {</span>
+<span class="nc" id="L199">            System.out.println(&quot;Error parsing config file&quot;);</span>
+<span class="nc" id="L200">            System.exit(0);</span>
+<span class="nc" id="L201">        } catch (IOException e) {</span>
+<span class="nc" id="L202">            System.out.println(&quot;Error reading config file&quot;);</span>
+<span class="nc" id="L203">            System.exit(0);</span>
+<span class="pc" id="L204">        }</span>
+
+        // Search the JSON Array
+<span class="fc" id="L207">        JSONObject userobj = null;</span>
+<span class="fc bfc" id="L208" title="All 2 branches covered.">        for (Object obj : catalog) {</span>
+<span class="fc" id="L209">            JSONObject temporaryObj = (JSONObject) obj;</span>
+            // Assuming Scroll_ID is stored as a number in the JSON object
+<span class="pc bpc" id="L211" title="1 of 2 branches missed.">            if (temporaryObj.get(&quot;ID_key&quot;) instanceof Number) {</span>
+<span class="fc" id="L212">                int scrollIdFromJson = ((Number) temporaryObj.get(&quot;ID_key&quot;)).intValue();</span>
+<span class="fc bfc" id="L213" title="All 2 branches covered.">                if (scrollIdFromJson == ID_key) {</span>
+<span class="fc" id="L214">                    userobj = temporaryObj;</span>
+                }
+            }
+<span class="fc" id="L217">        }</span>
+
+<span class="pc bpc" id="L219" title="1 of 2 branches missed.">        if (userobj != null) {</span>
+<span class="fc" id="L220">            this.full_name = userobj.get(&quot;Full_Name&quot;).toString();</span>
+<span class="fc" id="L221">            this.email = userobj.get(&quot;Email&quot;).toString();</span>
+<span class="fc" id="L222">            this.phone = userobj.get(&quot;Phone_Number&quot;).toString();</span>
+<span class="fc" id="L223">            this.password = userobj.get(&quot;Password&quot;).toString();</span>
+
+            // Deserialize Scrolls_Owned from JSON
+<span class="fc" id="L226">            JSONArray scrollsArray = (JSONArray) userobj.get(&quot;Scrolls_Owned&quot;);</span>
+<span class="fc" id="L227">            this.Scrolls_Owned = new ArrayList&lt;&gt;();</span>
+<span class="pc bpc" id="L228" title="1 of 2 branches missed.">            if (scrollsArray != null) {</span>
+<span class="pc bpc" id="L229" title="1 of 2 branches missed.">                for (Object scroll : scrollsArray) {</span>
+<span class="nc" id="L230">                    Scrolls_Owned.add(scroll.toString());</span>
+<span class="nc" id="L231">                }</span>
+            }
+
+            // Handle userType deserialization
+<span class="fc" id="L235">            String userTypeStr = userobj.get(&quot;userType&quot;).toString();</span>
+<span class="fc" id="L236">            this.userType = UserType.valueOf(userTypeStr);</span>
+
+<span class="fc bfc" id="L238" title="All 2 branches covered.">            if (this.userType == UserType.ADMIN) {</span>
+<span class="fc" id="L239">                this.userState = new Project.system.User.State.Admin();</span>
+            }
+        }
+<span class="fc" id="L242">    }</span>
+
+
+    // Update the json file after the information of user is updated
+    @Override
+    public void updateUser() {
+<span class="fc" id="L248">        ObjectMapper mapper = new ObjectMapper();</span>
+
+        try {
+<span class="fc" id="L251">            File tocFile = new File(TOC_JSON_PATH);</span>
+            ArrayNode arrayNode;
+
+            // Read existing JSON data
+<span class="pc bpc" id="L255" title="1 of 2 branches missed.">            if (tocFile.exists()) {</span>
+<span class="fc" id="L256">                JsonNode rootNode = mapper.readTree(tocFile);</span>
+<span class="pc bpc" id="L257" title="1 of 2 branches missed.">                if (rootNode.isArray()) {</span>
+<span class="fc" id="L258">                    arrayNode = (ArrayNode) rootNode;</span>
+                } else {
+<span class="nc" id="L260">                    arrayNode = mapper.createArrayNode();</span>
+                }
+<span class="fc" id="L262">            } else {</span>
+<span class="nc" id="L263">                System.out.println(&quot;UserList.json not found&quot;);</span>
+<span class="nc" id="L264">                return;</span>
+            }
+
+            // Iterate through the array to find the user by ID_key
+<span class="fc" id="L268">            boolean userFound = false;</span>
+<span class="pc bpc" id="L269" title="1 of 2 branches missed.">            for (int i = 0; i &lt; arrayNode.size(); i++) {</span>
+<span class="fc" id="L270">                ObjectNode userObj = (ObjectNode) arrayNode.get(i);</span>
+<span class="fc bfc" id="L271" title="All 2 branches covered.">                if (userObj.get(&quot;ID_key&quot;).asInt() == this.ID_key) {</span>
+                    // Update user fields
+<span class="fc" id="L273">                    userObj.put(&quot;Full_Name&quot;, this.full_name);</span>
+<span class="fc" id="L274">                    userObj.put(&quot;Phone_Number&quot;, this.phone);</span>
+<span class="fc" id="L275">                    userObj.put(&quot;Email&quot;, this.email);</span>
+<span class="fc" id="L276">                    userObj.put(&quot;userType&quot;, this.userType.toString());</span>
+<span class="fc" id="L277">                    userObj.put(&quot;Password&quot;, this.password);</span>
+<span class="fc" id="L278">                    userObj.put(&quot;ProfilePicturePath&quot;, this.profilePicturePath);</span>
+                    // Update Scrolls_Owned
+<span class="fc" id="L280">                    ArrayNode updatedScrollsArray = mapper.createArrayNode();</span>
+<span class="pc bpc" id="L281" title="1 of 2 branches missed.">                    for (String scroll : Scrolls_Owned) {</span>
+<span class="nc" id="L282">                        updatedScrollsArray.add(scroll);</span>
+<span class="nc" id="L283">                    }</span>
+<span class="fc" id="L284">                    userObj.set(&quot;Scrolls_Owned&quot;, updatedScrollsArray);</span>
+
+<span class="fc" id="L286">                    userFound = true;</span>
+<span class="fc" id="L287">                    break;</span>
+                }
+            }
+
+<span class="pc bpc" id="L291" title="1 of 2 branches missed.">            if (userFound) {</span>
+                // Write updated data back to the JSON file
+<span class="fc" id="L293">                mapper.writerWithDefaultPrettyPrinter().writeValue(Paths.get(TOC_JSON_PATH).toFile(), arrayNode);</span>
+<span class="fc" id="L294">                System.out.println(&quot;User information updated successfully.&quot;);</span>
+            } else {
+<span class="nc" id="L296">                System.out.println(&quot;User with ID_key &quot; + this.ID_key + &quot; not found.&quot;);</span>
+            }
+
+<span class="nc" id="L299">        } catch (IOException e) {</span>
+<span class="nc" id="L300">            e.printStackTrace();</span>
+<span class="fc" id="L301">        }</span>
+<span class="fc" id="L302">    }</span>
+
+
+    private String hashPassword(String password) {
+        try {
+<span class="fc" id="L307">            MessageDigest md = MessageDigest.getInstance(&quot;SHA-256&quot;);</span>
+<span class="fc" id="L308">            byte[] hashedBytes = md.digest(password.getBytes());</span>
+<span class="fc" id="L309">            StringBuilder sb = new StringBuilder();</span>
+<span class="fc bfc" id="L310" title="All 2 branches covered.">            for (byte b : hashedBytes) {</span>
+<span class="fc" id="L311">                sb.append(String.format(&quot;%02x&quot;, b));</span>
+            }
+<span class="fc" id="L313">            return sb.toString();</span>
+<span class="nc" id="L314">        } catch (NoSuchAlgorithmException e) {</span>
+<span class="nc" id="L315">            throw new RuntimeException(&quot;Error hashing password&quot;, e);</span>
+        }
+    }
+    @Override
+    public void setProfilePicturePath(String path) {
+<span class="fc" id="L320">        this.profilePicturePath = path;</span>
+<span class="fc" id="L321">        updateUser();  // Save the updated profile picture to the JSON file</span>
+<span class="fc" id="L322">    }</span>
+
+    @Override
+    public String getProfilePicturePath() {
+<span class="fc" id="L326">        System.out.println(&quot;Retrieving profile picture path: &quot; + this.profilePicturePath);  // Debugging line</span>
+<span class="fc" id="L327">        return this.profilePicturePath;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

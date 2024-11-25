@@ -1,0 +1,72 @@
+plugins {
+    id 'java'
+    id 'application'
+    id 'org.openjfx.javafxplugin' version '0.0.13'
+    id 'jacoco'
+}
+
+group = 'Project'
+version = '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+javafx {
+    version = "17.0.2"
+    modules = ['javafx.controls','javafx.media']
+}
+
+dependencies {
+    // JUnit for testing
+    testImplementation platform('org.junit:junit-bom:5.10.0')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+
+    // Jackson for JSON handling
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.13.0'
+
+    // json package
+    implementation 'com.googlecode.json-simple:json-simple:1.1.1'
+    implementation 'org.mindrot:jbcrypt:0.4'
+
+    // TestFX for JavaFX testing
+    testImplementation 'org.testfx:testfx-core:4.0.16-alpha'
+    testImplementation 'org.testfx:testfx-junit5:4.0.16-alpha'
+
+    // Mockito for mocking dependencies
+    testImplementation 'org.mockito:mockito-core:4.0.0'
+    testImplementation 'org.mockito:mockito-inline:4.0.0' // Or the latest version
+
+    // JavaFX dependencies
+    implementation 'org.openjfx:javafx-controls:17.0.2'
+    implementation 'org.openjfx:javafx-base:17.0.2'
+    implementation 'org.openjfx:javafx-graphics:17.0.2'
+    implementation 'org.openjfx:javafx-fxml:17.0.2'
+    implementation 'org.openjfx:javafx-swing:17.0.2'  // To support JFXPanel
+
+    // Optional: JavaFX for TestFX in case of issues
+    testImplementation 'org.openjfx:javafx-controls:17.0.2'
+    testImplementation 'org.openjfx:javafx-graphics:17.0.2'
+    testImplementation 'org.openjfx:javafx-base:17.0.2'
+    testImplementation 'org.openjfx:javafx-fxml:17.0.2'
+}
+
+jacocoTestReport {
+    reports {
+        xml.required = false
+        csv.required = false
+    }
+    afterEvaluate {
+        classDirectories.setFrom(files(classDirectories.files.collect {
+            fileTree(dir: it, exclude: ['**/view/**', '**/MainView.class', '**/User/User.class'])
+        }))
+    }
+}
+
+test {
+    useJUnitPlatform()
+}
+
+application {
+    mainClass = 'Project.MainView'
+}

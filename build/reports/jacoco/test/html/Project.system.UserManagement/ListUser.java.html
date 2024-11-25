@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ListUser.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">SOFT2412_Assignment2</a> &gt; <a href="index.source.html" class="el_package">Project.system.UserManagement</a> &gt; <span class="el_source">ListUser.java</span></div><h1>ListUser.java</h1><pre class="source lang-java linenums">package Project.system.UserManagement;
+
+import Project.system.User.User.User;
+import Project.system.User.User.UserTemplate;
+import Project.system.User.User.UserType;
+import Project.system.User.UserFactory.OldUserFactory;
+import Project.system.User.UserFactory.UserFactory;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+
+public class ListUser {
+    private static final String TOC_JSON_PATH = &quot;src/main/resources/Project/User/UserList.json&quot;;
+<span class="fc" id="L17">    private static ListUser listUser = new ListUser();</span>
+    private static UserFactory userFactory;
+
+<span class="fc" id="L20">    private ListUser() {</span>
+        // Private constructor to enforce Singleton pattern
+<span class="fc" id="L22">        userFactory = new OldUserFactory();</span>
+<span class="fc" id="L23">    }</span>
+
+    public static ListUser getInstance() {
+<span class="nc" id="L26">        return listUser;</span>
+    }
+
+    // Method to get a list of normal users (excluding admin users)
+    public static ArrayList&lt;UserTemplate&gt; getUsers() {
+<span class="fc" id="L31">        ArrayList&lt;UserTemplate&gt; normalUsers = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L32">        ObjectMapper mapper = new ObjectMapper();</span>
+
+        try {
+            // Read the JSON file
+<span class="fc" id="L36">            File tocFile = new File(listUser.TOC_JSON_PATH);</span>
+<span class="pc bpc" id="L37" title="1 of 2 branches missed.">            if (tocFile.exists()) {</span>
+<span class="fc" id="L38">                JsonNode rootNode = mapper.readTree(tocFile);</span>
+
+                // Iterate through the users
+<span class="fc bfc" id="L41" title="All 2 branches covered.">                for (JsonNode userNode : rootNode) {</span>
+                    // Check if the user is not an admin
+<span class="fc" id="L43">                    String userTypeStr = userNode.get(&quot;userType&quot;).asText();</span>
+<span class="fc bfc" id="L44" title="All 2 branches covered.">                    if (userTypeStr.equals(UserType.USER.toString())) {</span>
+                        // Create a UserTemplate object for normal users
+<span class="fc" id="L46">                        int id = userNode.get(&quot;ID_key&quot;).asInt();</span>
+
+                        // Assuming User class implements UserTemplate
+<span class="fc" id="L49">                        UserTemplate user = ListUser.userFactory.createUser(id);</span>
+<span class="fc" id="L50">                        normalUsers.add(user);</span>
+
+                    }
+<span class="fc" id="L53">                }</span>
+<span class="fc" id="L54">            } else {</span>
+<span class="nc" id="L55">                System.out.println(&quot;UserList.json not found.&quot;);</span>
+            }
+<span class="nc" id="L57">        } catch (IOException e) {</span>
+<span class="nc" id="L58">            e.printStackTrace();</span>
+<span class="fc" id="L59">        }</span>
+
+<span class="fc" id="L61">        return normalUsers;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

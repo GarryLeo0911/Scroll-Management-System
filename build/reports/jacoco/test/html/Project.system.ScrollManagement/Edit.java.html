@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Edit.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">SOFT2412_Assignment2</a> &gt; <a href="index.source.html" class="el_package">Project.system.ScrollManagement</a> &gt; <span class="el_source">Edit.java</span></div><h1>Edit.java</h1><pre class="source lang-java linenums">package Project.system.ScrollManagement;
+
+import Project.system.Scroll.Scroll.Scroll;
+import Project.system.Scroll.ScrollFactory.ExistingScrollFactory;
+import Project.system.Scroll.ScrollFactory.ScrollFactory;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Paths;
+import java.util.Iterator;
+
+public class Edit {
+    private ScrollFactory scrollFactory;
+    private Scroll scroll;
+    private static final String TOC_JSON_PATH = &quot;src/main/resources/Project/Scroll/TableOfContent.json&quot;;
+<span class="fc" id="L20">    private static Edit editInstance = new Edit();</span>
+
+<span class="fc" id="L22">    private Edit() {</span>
+<span class="fc" id="L23">        scrollFactory = new ExistingScrollFactory();</span>
+<span class="fc" id="L24">    }</span>
+
+    public static Edit getInstance() {
+<span class="nc" id="L27">        return editInstance;</span>
+    }
+
+    public static void setScroll(String scrollID) {
+<span class="fc" id="L31">        editInstance.scroll = editInstance.scrollFactory.createScroll(Integer.parseInt(scrollID));</span>
+<span class="fc" id="L32">    }</span>
+
+    public static void editScrollContent(String scrollContent) {
+<span class="fc" id="L35">        editInstance.scroll.setContent(scrollContent);</span>
+<span class="fc" id="L36">        editInstance.scroll.writeToFile();</span>
+<span class="fc" id="L37">    }</span>
+
+    public static void editScrollName(String newScrollName) {
+<span class="fc" id="L40">        editInstance.scroll.setScroll_Name(newScrollName); // Update scroll object name</span>
+<span class="fc" id="L41">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

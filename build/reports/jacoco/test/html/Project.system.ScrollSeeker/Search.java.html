@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Search.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">SOFT2412_Assignment2</a> &gt; <a href="index.source.html" class="el_package">Project.system.ScrollSeeker</a> &gt; <span class="el_source">Search.java</span></div><h1>Search.java</h1><pre class="source lang-java linenums">package Project.system.ScrollSeeker;
+
+import Project.system.Scroll.Scroll.Scroll;
+import Project.system.Scroll.ScrollFactory.ExistingScrollFactory;
+import Project.system.Scroll.ScrollFactory.ScrollFactory;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Iterator;
+
+public class Search {
+
+    private static final String TOC_JSON_PATH = &quot;src/main/resources/Project/Scroll/TableOfContent.json&quot;;
+<span class="fc" id="L18">    private String uploaderID = null;</span>
+<span class="fc" id="L19">    private String scrollID = null;</span>
+<span class="fc" id="L20">    private String name = null;</span>
+<span class="fc" id="L21">    private String uploadDate = null;</span>
+
+<span class="fc" id="L23">    private static Search search = new Search();</span>
+
+<span class="fc" id="L25">    private Search() {}</span>
+
+    public static Search getInstance() {
+<span class="fc" id="L28">        return search;</span>
+    }
+
+    public static void setUploaderID(String uploaderID) {
+<span class="fc" id="L32">        search.uploaderID = uploaderID;</span>
+<span class="fc" id="L33">    }</span>
+
+    public static void setScrollID(String scrollID) {
+<span class="fc" id="L36">        search.scrollID = scrollID;</span>
+<span class="fc" id="L37">    }</span>
+
+    public static void setName(String name) {
+<span class="fc" id="L40">        search.name = name;</span>
+<span class="fc" id="L41">    }</span>
+
+    public static void setUploadDate(String uploadDate) {
+<span class="fc" id="L44">        search.uploadDate = uploadDate;</span>
+<span class="fc" id="L45">    }</span>
+
+    public static ArrayList&lt;Scroll&gt; searchScroll() {
+<span class="fc" id="L48">        ObjectMapper mapper = new ObjectMapper();</span>
+<span class="fc" id="L49">        ArrayList&lt;Scroll&gt; scrollList = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L50">        ScrollFactory scrollFactory = new ExistingScrollFactory();</span>
+
+        try {
+<span class="fc" id="L53">            File tocFile = new File(TOC_JSON_PATH);</span>
+<span class="pc bpc" id="L54" title="1 of 2 branches missed.">            if (!tocFile.exists()) {</span>
+<span class="nc" id="L55">                System.out.println(&quot;TableOfContent.json not found.&quot;);</span>
+<span class="nc" id="L56">                return scrollList;</span>
+            }
+
+<span class="fc" id="L59">            ArrayNode arrayNode = (ArrayNode) mapper.readTree(tocFile);</span>
+<span class="fc" id="L60">            Iterator&lt;JsonNode&gt; iterator = arrayNode.elements();</span>
+
+<span class="fc bfc" id="L62" title="All 2 branches covered.">            while (iterator.hasNext()) {</span>
+<span class="fc" id="L63">                JsonNode node = iterator.next();</span>
+<span class="fc" id="L64">                boolean matches = true;</span>
+
+                // Check for matching criteria
+<span class="pc bpc" id="L67" title="2 of 6 branches missed.">                if (search.name != null &amp;&amp; !search.name.isEmpty() &amp;&amp; !node.get(&quot;Scroll_Name&quot;).asText().equalsIgnoreCase(search.name)) {</span>
+<span class="fc" id="L68">                    matches = false;</span>
+                }
+<span class="pc bpc" id="L70" title="2 of 6 branches missed.">                if (search.scrollID != null &amp;&amp; !search.scrollID.isEmpty() &amp;&amp; !node.get(&quot;Scroll_ID&quot;).asText().equals(search.scrollID)) {</span>
+<span class="fc" id="L71">                    matches = false;</span>
+                }
+<span class="pc bpc" id="L73" title="2 of 6 branches missed.">                if (search.uploaderID != null &amp;&amp; !search.uploaderID.isEmpty() &amp;&amp; !node.get(&quot;Uploader_ID&quot;).asText().equals(search.uploaderID)) {</span>
+<span class="fc" id="L74">                    matches = false;</span>
+                }
+<span class="pc bpc" id="L76" title="3 of 6 branches missed.">                if (search.uploadDate != null &amp;&amp; !search.uploadDate.isEmpty() &amp;&amp; !node.get(&quot;Upload_Date&quot;).asText().equals(search.uploadDate)) {</span>
+<span class="fc" id="L77">                    matches = false;</span>
+                }
+
+<span class="pc bpc" id="L80" title="1 of 2 branches missed.">                if (matches) {</span>
+<span class="nc" id="L81">                    Scroll foundScroll = scrollFactory.createScroll(node.get(&quot;Scroll_ID&quot;).asInt());</span>
+<span class="nc" id="L82">                    scrollList.add(foundScroll);</span>
+                }
+<span class="fc" id="L84">            }</span>
+
+<span class="nc" id="L86">        } catch (IOException e) {</span>
+<span class="nc" id="L87">            e.printStackTrace();</span>
+<span class="fc" id="L88">        }</span>
+
+<span class="fc" id="L90">        return scrollList;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

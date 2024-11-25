@@ -1,0 +1,246 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ExistingScroll.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">SOFT2412_Assignment2</a> &gt; <a href="index.source.html" class="el_package">Project.system.Scroll.Scroll</a> &gt; <span class="el_source">ExistingScroll.java</span></div><h1>ExistingScroll.java</h1><pre class="source lang-java linenums">package Project.system.Scroll.Scroll;
+
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
+
+import java.io.*;
+import java.time.LocalDate;
+import java.util.Scanner;
+
+public class ExistingScroll implements Scroll {
+    private String Scroll_Name;
+    private int Scroll_ID;
+    private int Uploader_ID;
+    private int DownloadTimes;
+    private int UploadTimes;
+    private LocalDate Upload_Date;
+    private String Content;
+
+    // Path to the JSON file
+    private static final String TOC_JSON_PATH = &quot;src/main/resources/Project/Scroll/TableOfContent.json&quot;;
+
+    // The JSON array representing the catalog
+    private JSONArray catalog;
+
+    // Constructor
+<span class="fc" id="L28">    public ExistingScroll(int Scroll_ID) {</span>
+<span class="fc" id="L29">        setCatalog(); // Initialize the catalog from the JSON file</span>
+<span class="fc" id="L30">        this.Scroll_ID = Scroll_ID;</span>
+
+        // Find the specific scroll data by name
+<span class="fc" id="L33">        JSONObject scrollData = findScrollDataByID(Scroll_ID);</span>
+
+<span class="fc bfc" id="L35" title="All 2 branches covered.">        if (scrollData != null) {</span>
+<span class="fc" id="L36">            this.Scroll_Name = (String) scrollData.get(&quot;Scroll_Name&quot;);  // Cast Long to int</span>
+<span class="fc" id="L37">            this.Uploader_ID = ((Long) scrollData.get(&quot;Uploader_ID&quot;)).intValue(); // Cast Long to int</span>
+<span class="fc" id="L38">            this.UploadTimes = ((Long) scrollData.get(&quot;UploadTimes&quot;)).intValue();</span>
+<span class="fc" id="L39">            this.DownloadTimes = ((Long) scrollData.get(&quot;DownloadTimes&quot;)).intValue();</span>
+<span class="fc" id="L40">            String date = (String) scrollData.get(&quot;Upload_Date&quot;);</span>
+<span class="fc" id="L41">            this.Upload_Date = LocalDate.parse(date);  // Parse the date correctly</span>
+<span class="fc" id="L42">            readScroll();</span>
+<span class="fc" id="L43">        } else {</span>
+<span class="fc" id="L44">            System.out.println(&quot;Scroll with name '&quot; + Scroll_Name + &quot;' not found.&quot;);</span>
+        }
+<span class="fc" id="L46">    }</span>
+
+    // Method to find the scroll data based on the id from the JSON array
+    private JSONObject findScrollDataByID(int Scroll_ID) {
+<span class="fc bfc" id="L50" title="All 2 branches covered.">        for (Object obj : catalog) {</span>
+<span class="fc" id="L51">            JSONObject scrollObj = (JSONObject) obj;</span>
+            // Assuming Scroll_ID is stored as a number in the JSON object
+<span class="pc bpc" id="L53" title="1 of 2 branches missed.">            if (scrollObj.get(&quot;Scroll_ID&quot;) instanceof Number) {</span>
+<span class="fc" id="L54">                int scrollIdFromJson = ((Number) scrollObj.get(&quot;Scroll_ID&quot;)).intValue();</span>
+<span class="fc bfc" id="L55" title="All 2 branches covered.">                if (scrollIdFromJson == Scroll_ID) {</span>
+<span class="fc" id="L56">                    return scrollObj;</span>
+                }
+            }
+<span class="fc" id="L59">        }</span>
+<span class="fc" id="L60">        return null;  // Return null if scroll not found</span>
+    }
+
+    public String getScroll_Name() {
+<span class="fc" id="L64">        return Scroll_Name;</span>
+    }
+
+    public void setScroll_Name(String scroll_Name) {
+<span class="fc" id="L68">        this.Scroll_Name = scroll_Name;</span>
+<span class="fc" id="L69">        update();</span>
+<span class="fc" id="L70">    }</span>
+
+    public int getScroll_ID() {
+<span class="fc" id="L73">        return Scroll_ID;</span>
+    }
+
+    public void setScroll_ID(int scroll_ID) {
+<span class="nc" id="L77">        this.Scroll_ID = scroll_ID;</span>
+<span class="nc" id="L78">    }</span>
+
+    public int getUploader_ID() {
+<span class="fc" id="L81">        return Uploader_ID;</span>
+    }
+
+    public void setUploader_ID(int uploader_ID) {
+<span class="nc" id="L85">        this.Uploader_ID = uploader_ID;</span>
+<span class="nc" id="L86">    }</span>
+
+    public int getDownloadTimes() {
+<span class="fc" id="L89">        return DownloadTimes;</span>
+    }
+
+    public void setDownloadTimes() {
+<span class="fc" id="L93">        this.DownloadTimes ++;</span>
+<span class="fc" id="L94">        updateDownloadTimesInJSON();</span>
+<span class="fc" id="L95">    }</span>
+
+    public int getUploadTimes() {
+<span class="nc" id="L98">        return UploadTimes;</span>
+    }
+
+    public LocalDate getUpload_Date() {
+<span class="fc" id="L102">        return Upload_Date;</span>
+    }
+
+    public String getContent() {
+<span class="fc" id="L106">        return Content;</span>
+    }
+
+    public void setContent(String content) {
+<span class="fc" id="L110">        this.Content = content;</span>
+<span class="fc" id="L111">        writeToFile();</span>
+<span class="fc" id="L112">        update();</span>
+<span class="fc" id="L113">    }</span>
+
+    public void createFile() {
+<span class="nc" id="L116">        return;</span>
+    }
+
+    public void writeToFile() {
+        try {
+<span class="fc" id="L121">            FileWriter writer = new FileWriter(&quot;src/main/resources/Project/Scroll/&quot; + Scroll_ID + &quot;.txt&quot;);</span>
+<span class="fc" id="L122">            writer.write(getContent());</span>
+<span class="fc" id="L123">            writer.close();</span>
+<span class="nc" id="L124">        } catch (IOException e) {</span>
+<span class="nc" id="L125">            System.out.println(e);</span>
+<span class="fc" id="L126">        }</span>
+<span class="fc" id="L127">    }</span>
+
+    // Read the JSON File and set the catalog as a JSONArray
+    public void setCatalog() {
+<span class="fc" id="L131">        JSONParser parser = new JSONParser();</span>
+
+        try {
+<span class="fc" id="L134">            this.catalog = (JSONArray) parser.parse(new FileReader(TOC_JSON_PATH)); // Parse the JSON array directly</span>
+<span class="nc" id="L135">        } catch (FileNotFoundException e) {</span>
+<span class="nc" id="L136">            System.out.println(&quot;File not found&quot;);</span>
+<span class="nc" id="L137">            System.exit(0);</span>
+<span class="nc" id="L138">        } catch (ParseException e) {</span>
+<span class="nc" id="L139">            System.out.println(&quot;Error parsing config file&quot;);</span>
+<span class="nc" id="L140">            System.exit(0);</span>
+<span class="nc" id="L141">        } catch (IOException e) {</span>
+<span class="nc" id="L142">            System.out.println(&quot;Error reading config file&quot;);</span>
+<span class="nc" id="L143">            System.exit(0);</span>
+<span class="pc" id="L144">        }</span>
+<span class="fc" id="L145">    }</span>
+
+    // Read the Scroll content from a text file
+    private void readScroll() {
+        try {
+<span class="fc" id="L150">            File file = new File(&quot;src/main/resources/Project/Scroll/&quot; + Scroll_ID + &quot;.txt&quot;);</span>
+<span class="pc bpc" id="L151" title="1 of 2 branches missed.">            if (file.exists()) {</span>
+<span class="fc" id="L152">                Scanner reader = new Scanner(file);</span>
+<span class="fc" id="L153">                StringBuilder contentBuilder = new StringBuilder();</span>
+<span class="fc bfc" id="L154" title="All 2 branches covered.">                while (reader.hasNextLine()) {</span>
+<span class="fc" id="L155">                    contentBuilder.append(reader.nextLine()).append(&quot;\n&quot;);</span>
+                }
+<span class="fc" id="L157">                this.Content = contentBuilder.toString();</span>
+<span class="fc" id="L158">                reader.close();</span>
+            }
+<span class="nc" id="L160">        } catch (FileNotFoundException e) {</span>
+<span class="nc" id="L161">            System.out.println(&quot;File not found&quot;);</span>
+<span class="nc" id="L162">            System.exit(0);</span>
+<span class="fc" id="L163">        }</span>
+<span class="fc" id="L164">    }</span>
+
+    // Method to update the DownloadTimes in the JSON file
+    public void updateDownloadTimesInJSON() {
+<span class="fc" id="L168">        JSONParser parser = new JSONParser();</span>
+        try {
+            // Read the existing JSON file
+<span class="fc" id="L171">            File tocFile = new File(TOC_JSON_PATH);</span>
+<span class="fc" id="L172">            JSONArray jsonArray = (JSONArray) parser.parse(new FileReader(tocFile));</span>
+
+            // Find the specific scroll by ID and update its DownloadTimes
+<span class="pc bpc" id="L175" title="1 of 2 branches missed.">            for (Object obj : jsonArray) {</span>
+<span class="fc" id="L176">                JSONObject scrollObj = (JSONObject) obj;</span>
+<span class="pc bpc" id="L177" title="1 of 2 branches missed.">                if (scrollObj.get(&quot;Scroll_ID&quot;) instanceof Number) {</span>
+<span class="fc" id="L178">                    int scrollIdFromJson = ((Number) scrollObj.get(&quot;Scroll_ID&quot;)).intValue();</span>
+<span class="pc bpc" id="L179" title="1 of 2 branches missed.">                    if (scrollIdFromJson == this.Scroll_ID) {</span>
+                        // Update the DownloadTimes in the JSON object
+<span class="fc" id="L181">                        scrollObj.put(&quot;DownloadTimes&quot;, this.DownloadTimes);</span>
+<span class="fc" id="L182">                        break;</span>
+                    }
+                }
+<span class="nc" id="L185">            }</span>
+
+            // Write the updated JSON array back to the file
+<span class="fc" id="L188">            FileWriter fileWriter = new FileWriter(TOC_JSON_PATH);</span>
+<span class="fc" id="L189">            fileWriter.write(jsonArray.toJSONString());</span>
+<span class="fc" id="L190">            fileWriter.flush();</span>
+<span class="fc" id="L191">            fileWriter.close();</span>
+
+<span class="nc" id="L193">        } catch (FileNotFoundException e) {</span>
+<span class="nc" id="L194">            System.out.println(&quot;JSON file not found.&quot;);</span>
+<span class="nc" id="L195">        } catch (IOException | ParseException e) {</span>
+<span class="nc" id="L196">            e.printStackTrace();</span>
+<span class="pc" id="L197">        }</span>
+<span class="fc" id="L198">    }</span>
+
+
+    // Method to update the entire scroll data in the JSON file
+    public void update() {
+<span class="fc" id="L203">        JSONParser parser = new JSONParser();</span>
+        try {
+            // Read the existing JSON file
+<span class="fc" id="L206">            File tocFile = new File(TOC_JSON_PATH);</span>
+<span class="fc" id="L207">            JSONArray jsonArray = (JSONArray) parser.parse(new FileReader(tocFile));</span>
+
+            // Find the specific scroll by ID and update its fields
+<span class="fc bfc" id="L210" title="All 2 branches covered.">            for (Object obj : jsonArray) {</span>
+<span class="fc" id="L211">                JSONObject scrollObj = (JSONObject) obj;</span>
+<span class="pc bpc" id="L212" title="1 of 2 branches missed.">                if (scrollObj.get(&quot;Scroll_ID&quot;) instanceof Number) {</span>
+<span class="fc" id="L213">                    int scrollIdFromJson = ((Number) scrollObj.get(&quot;Scroll_ID&quot;)).intValue();</span>
+<span class="fc bfc" id="L214" title="All 2 branches covered.">                    if (scrollIdFromJson == this.Scroll_ID) {</span>
+<span class="fc" id="L215">                        this.UploadTimes++;</span>
+<span class="fc" id="L216">                        this.Upload_Date = LocalDate.now();</span>
+                        // Update all relevant fields
+<span class="fc" id="L218">                        scrollObj.put(&quot;Scroll_Name&quot;, this.Scroll_Name);</span>
+<span class="fc" id="L219">                        scrollObj.put(&quot;Uploader_ID&quot;, this.Uploader_ID);</span>
+<span class="fc" id="L220">                        scrollObj.put(&quot;UploadTimes&quot;, this.UploadTimes);</span>
+<span class="fc" id="L221">                        scrollObj.put(&quot;Upload_Date&quot;, this.Upload_Date.toString());</span>
+
+<span class="fc" id="L223">                        break;</span>
+                    }
+                }
+<span class="fc" id="L226">            }</span>
+
+            // Write the updated JSON array back to the file
+<span class="fc" id="L229">            FileWriter fileWriter = new FileWriter(TOC_JSON_PATH);</span>
+<span class="fc" id="L230">            fileWriter.write(jsonArray.toJSONString());</span>
+<span class="fc" id="L231">            fileWriter.flush();</span>
+<span class="fc" id="L232">            fileWriter.close();</span>
+
+<span class="nc" id="L234">        } catch (FileNotFoundException e) {</span>
+<span class="nc" id="L235">            System.out.println(&quot;JSON file not found.&quot;);</span>
+<span class="nc" id="L236">        } catch (IOException | ParseException e) {</span>
+<span class="nc" id="L237">            e.printStackTrace();</span>
+<span class="pc" id="L238">        }</span>
+<span class="fc" id="L239">    }</span>
+    @Override
+    public String toString() {
+<span class="nc" id="L242">        return &quot;Scroll Name: &quot; + Scroll_Name + &quot;, Scroll ID: &quot; + Scroll_ID + &quot;, Uploader ID: &quot; + Uploader_ID + &quot;, Content: &quot; + Content;</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

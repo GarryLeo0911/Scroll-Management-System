@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Guest.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">SOFT2412_Assignment2</a> &gt; <a href="index.source.html" class="el_package">Project.system.User.User</a> &gt; <span class="el_source">Guest.java</span></div><h1>Guest.java</h1><pre class="source lang-java linenums">package Project.system.User.User;
+
+import Project.system.User.State.UserState;
+
+import java.util.ArrayList;
+
+public class Guest implements UserTemplate {
+    private UserType userType;
+    private UserState userState;
+    private String profilePicturePath;
+
+<span class="nc" id="L12">    public Guest(){</span>
+<span class="nc" id="L13">        this.userType = UserType.GUEST;</span>
+<span class="nc" id="L14">        this.userState = new Project.system.User.State.Guest();</span>
+<span class="nc" id="L15">    }</span>
+
+    @Override
+    public void signUp() {
+
+<span class="nc" id="L20">    }</span>
+
+    @Override
+    public UserType getUserType() {
+<span class="nc" id="L24">        return  this.userType;</span>
+    }
+
+    @Override
+    public void setPassword(String password) {
+
+<span class="nc" id="L30">    }</span>
+
+    @Override
+    public String getPassword() {
+<span class="nc" id="L34">        return &quot;&quot;;</span>
+    }
+
+    @Override
+    public String getUsername() {
+<span class="nc" id="L39">        return &quot;&quot;;</span>
+    }
+
+    @Override
+    public void setUsername(String username) {
+
+<span class="nc" id="L45">    }</span>
+
+    @Override
+    public String getEmail() {
+<span class="nc" id="L49">        return &quot;&quot;;</span>
+    }
+
+    @Override
+    public void setEmail(String email) {
+
+<span class="nc" id="L55">    }</span>
+
+    @Override
+    public String getPhoneNumber() {
+<span class="nc" id="L59">        return &quot;&quot;;</span>
+    }
+
+    @Override
+    public void setPhoneNumber(String phoneNumber) {
+
+<span class="nc" id="L65">    }</span>
+
+    @Override
+    public int getIDKeys() {
+<span class="nc" id="L69">        return -1;</span>
+    }
+
+    @Override
+    public void setIDKeys(String IDKeys) {
+
+<span class="nc" id="L75">    }</span>
+
+    @Override
+    public UserState getUserState() {
+<span class="nc" id="L79">        return this.userState;</span>
+    }
+
+    @Override
+    public void addScroll(String ScrollID) {
+
+<span class="nc" id="L85">    }</span>
+
+    @Override
+    public ArrayList&lt;String&gt; getScrollsOwned() {
+<span class="nc" id="L89">        return null;</span>
+    }
+
+    @Override
+    public void updateUser() {
+
+<span class="nc" id="L95">    }</span>
+    @Override
+    public void setProfilePicturePath(String path) {
+<span class="nc" id="L98">        this.profilePicturePath = path;</span>
+<span class="nc" id="L99">        updateUser();  // Save the updated profile picture to the JSON file</span>
+<span class="nc" id="L100">    }</span>
+
+    @Override
+    public String getProfilePicturePath() {
+<span class="nc" id="L104">        System.out.println(&quot;Retrieving profile picture path: &quot; + this.profilePicturePath);  // Debugging line</span>
+<span class="nc" id="L105">        return this.profilePicturePath;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

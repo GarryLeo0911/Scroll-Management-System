@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>View.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">SOFT2412_Assignment2</a> &gt; <a href="index.source.html" class="el_package">Project.system.ScrollSeeker</a> &gt; <span class="el_source">View.java</span></div><h1>View.java</h1><pre class="source lang-java linenums">package Project.system.ScrollSeeker;
+
+import Project.system.Scroll.Scroll.Scroll;
+import Project.system.Scroll.ScrollFactory.ExistingScrollFactory;
+import Project.system.Scroll.ScrollFactory.ScrollFactory;
+
+public class View {
+    private String filename;
+<span class="fc" id="L9">    private String directoryPath = &quot;src/main/resources/Project/Scroll/&quot;;</span>
+
+<span class="fc" id="L11">    public static View view = new View();</span>
+
+<span class="fc" id="L13">    public View() {}</span>
+
+    public static View getView() {
+<span class="nc" id="L16">        return view;</span>
+    }
+
+    public static void setFilename(String filename) {
+<span class="nc" id="L20">        view.filename = filename;</span>
+<span class="nc" id="L21">    }</span>
+
+    public static String getScrollContent() {
+<span class="nc" id="L24">        int dotIndex = view.filename.lastIndexOf(&quot;.&quot;);</span>
+
+<span class="nc" id="L26">        String nameWithoutExtension = view.filename.substring(0, dotIndex);</span>
+
+<span class="nc" id="L28">        ScrollFactory ExistingScrollFactory = new ExistingScrollFactory();</span>
+<span class="nc" id="L29">        Scroll scroll = ExistingScrollFactory.createScroll(Integer.parseInt(nameWithoutExtension));</span>
+<span class="nc" id="L30">        return scroll.getContent();</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>
